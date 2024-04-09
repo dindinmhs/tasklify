@@ -7,7 +7,6 @@ export async function POST(req) {
         const db = await connectDB()
         const coll = db.collection('user')
         const exist = await coll.findOne({ email : data.email})
-        console.log(exist)
         if (exist) {
             return NextResponse.json({exist : true }, {status : 200})
         } else {

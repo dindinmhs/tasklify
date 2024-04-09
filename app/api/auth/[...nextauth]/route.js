@@ -1,6 +1,7 @@
 import connectDB from '@/utils/connectdb';
 import NextAuth from 'next-auth';
 import CredentialsProvider from 'next-auth/providers/credentials'
+import { redirect } from 'next/dist/server/api-utils';
 export const authOptions = {
   // Secret for Next-auth, without this JWT encryption/decryption won't work
   secret: process.env.NEXTAUTH_SECRET,
@@ -9,7 +10,7 @@ export const authOptions = {
   providers: [
     CredentialsProvider({
       name :'credentials',
-      type : 'credentials',
+      // menangani sign in
       async authorize(credentials) {
         const {email, password} = credentials
         try {
@@ -17,7 +18,7 @@ export const authOptions = {
           const coll = db.collection('user')
           const correct =  await coll.findOne({email : email, password : password})
           if (correct) {
-            return credentials
+            return correct
           } else {
             return null
           }
@@ -27,9 +28,10 @@ export const authOptions = {
       },
     })
   ],
-  page : {
-    signIn : '/'
-  }
+  pages : {
+    signIn : "/",
+    newUser : '/signup'
+  },
 };
 
 const handler = NextAuth(authOptions);

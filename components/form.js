@@ -4,7 +4,6 @@ import Link from 'next/link'
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { signIn } from 'next-auth/react'
-import axios from 'axios'
 
 export function Form({head, content}) {
     // reducer data
@@ -22,6 +21,16 @@ export function Form({head, content}) {
     // menangani submit
     async function handleSubmit(e) {
         e.preventDefault()
+        // menangani input kosong
+        const values = Object.values(data)
+        let empty = false
+        values.forEach(e => {
+            if (e === '') empty = true
+        })
+        if (values.length < content.length || empty) {
+            setInfo('Some fields are empty. Please fill them in')
+            return
+        } 
         // menangani sign in
         if (head === 'Sign in') {
             // check benar
@@ -33,7 +42,6 @@ export function Form({head, content}) {
                 body : JSON.stringify(data)
             })
             const user = await res.json()
-            console.log(user)
             // jika benar
             if (user.correct) {
                 const res = await signIn('credentials', {
