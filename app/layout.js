@@ -1,7 +1,8 @@
-import { Inter } from "next/font/google";
+import { Marko_One } from "next/font/google";
 import {Providers} from "../provider";
+import './globals.css'
 
-const inter = Inter({ subsets: ["latin"] });
+const markoOne = Marko_One({ weight : '400', subsets : ['latin'] });
 
 export const metadata = {
   title: "Tasklify",
@@ -11,7 +12,7 @@ export const metadata = {
 export default function RootLayout({ children }) {
   return (
     <html lang="en">
-      <body className={inter.className}><Providers>{children}</Providers></body>
+      <body className={markoOne.className}><Providers>{children}</Providers></body>
     </html>
   );
 }

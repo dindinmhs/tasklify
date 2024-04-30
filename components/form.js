@@ -4,6 +4,8 @@ import Link from 'next/link'
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { signIn } from 'next-auth/react'
+import { Button } from './button'
+import Image from 'next/image'
 
 export function Form({head, content}) {
     // reducer data
@@ -96,19 +98,39 @@ export function Form({head, content}) {
     return (
         <div>
             <form onSubmit={handleSubmit}>
-                <h2>{`${head} to Tasklify`}</h2>
+            <Image
+                src="/logo-tasklify.svg"
+                width={70}
+                height={70}
+                alt="logo tasklify"
+                priority={false}
+                className="m-auto"
+            />
+                <h2 className='text-3xl my-10'>{`${head} to Tasklify`}</h2>
                 {content.map(el => (
-                    <div key={el.id}>
-                        <label htmlFor={el.id}>{el.name}</label><br/>
-                        <input name={el.id} onChange={handleChange} placeholder={el.id} id={el.id} type={el.type}/>
+                    <div className='relative my-4' key={el.id}>
+                        {/* <label htmlFor={el.id}>{el.name}</label><br/> */}
+                        <input className='border-2 border-solid border-black rounded-full px-4 py-1 w-full placeholder-black outline-none' name={el.id} onChange={handleChange} placeholder={el.id} id={el.id} type={el.type}/>
+                        <div className='bg-black top-0 right-0 left-0 bottom-0 -z-10 absolute rounded-full -translate-x-1 translate-y-1'></div>
                     </div>
                 ))}
                 <p>{info}</p>
-                <button type="submit">{head === 'Sign in' ? 'Sign in' : 'Sign up'}</button>
-                <p>Or</p>
-                <h3>Google</h3>
-                <p>{ head === 'Sign in' ? "don't have an account? ": "already have an account? " }
-                    <Link href={head === 'Sign in' ? '/signup' : '/'}>{ head === 'Sign in' ? "Sign up ": "Sign in" }</Link>
+                <Button
+                    name={head === 'Sign in' ? 'Sign in' : 'Sign up'}
+                    bgColor="bg-[#56F35D]"
+                    type="submit"
+                />
+                <div className='w-full mt-4 mb-2 h-10 flex items-center justify-center'>
+                    <div className='w-full h-[0.2rem] bg-black'></div>
+                    <p className='bg-white px-2 w-fit absolute text-sm'>or continue with</p>
+                </div>
+                <Button
+                    name="Google"
+                    bgColor="bg-[#54CCFF]"
+                    type="button"
+                />
+                <p className='text-sm mt-6 text-center'>{ head === 'Sign in' ? "don't have an account? ": "already have an account? " }
+                    <Link className='text-blue-700' href={head === 'Sign in' ? '/signup' : '/'}>{ head === 'Sign in' ? "Sign up ": "Sign in" }</Link>
                 </p>
             </form>
         </div>

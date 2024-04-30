@@ -1,6 +1,6 @@
 'use client'
-
 import { Form } from "@/components/form"
+import { Hero } from "@/components/hero"
 
 export default function Login() {
     const content = [
@@ -16,9 +16,13 @@ export default function Login() {
         }
     ]
     return (
-        <Form
-            head="Sign in"
-            content={content}
-        />
+        <div className="grid grid-cols-2 h-screen justify-items-center items-center">
+            <Hero/>
+            <Form
+                head="Sign in"
+                content={content}
+            />
+            
+        </div>
     )
 }
