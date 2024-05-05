@@ -1,7 +1,7 @@
 import connectDB from '@/utils/connectdb';
 import NextAuth from 'next-auth';
 import CredentialsProvider from 'next-auth/providers/credentials'
-import { redirect } from 'next/dist/server/api-utils';
+import bcrypt from "bcrypt"
 export const authOptions = {
   // Secret for Next-auth, without this JWT encryption/decryption won't work
   secret: process.env.NEXTAUTH_SECRET,
@@ -16,11 +16,15 @@ export const authOptions = {
         try {
           const db = await connectDB()
           const coll = db.collection('user')
-          const correct =  await coll.findOne({email : email, password : password})
-          if (correct) {
-            return correct
-          } else {
+          const user =  await coll.findOne({email : email})
+          if (!user) {
             return null
+          }
+          const passwordMatch = await bcrypt.compare(password,user.password)
+          if (!passwordMatch) {
+            return null
+          } else {
+            return user  
           }
         } catch (error) {
           console.error(error)

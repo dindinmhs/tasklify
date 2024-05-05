@@ -16,7 +16,7 @@ export default function Login() {
         }
     ]
     return (
-        <div className="grid grid-cols-2 h-screen justify-items-center items-center">
+        <div className="lg:grid lg:grid-cols-2 flex py-4 lc:py-0 lc:h-screen justify-center lg:justify-items-center items-center">
             <Hero/>
             <Form
                 head="Sign in"

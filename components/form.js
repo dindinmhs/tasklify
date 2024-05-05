@@ -8,6 +8,8 @@ import { Button } from './button'
 import Image from 'next/image'
 
 export function Form({head, content}) {
+    // transition
+    const [isPending, setPending] = useState(false)
     // reducer data
     const [data, setData] = useState({})
     // reducer info
@@ -23,6 +25,7 @@ export function Form({head, content}) {
     // menangani submit
     async function handleSubmit(e) {
         e.preventDefault()
+        setPending(true)
         // menangani input kosong
         const values = Object.values(data)
         let empty = false
@@ -30,7 +33,8 @@ export function Form({head, content}) {
             if (e === '') empty = true
         })
         if (values.length < content.length || empty) {
-            setInfo('Some fields are empty. Please fill them in')
+            setInfo('Some fields are empty')
+            setPending(false)
             return
         } 
         // menangani sign in
@@ -46,12 +50,13 @@ export function Form({head, content}) {
             const user = await res.json()
             // jika benar
             if (user.correct) {
+                
                 const res = await signIn('credentials', {
                     redirect : false,
                     email : data.email,
                     password : data.password,
                 })
-                console.log(res.ok)
+                setPending(false)
                 if (res.ok) {
                     router.replace('/dashboard')
                 } else {
@@ -64,17 +69,18 @@ export function Form({head, content}) {
             // menangani sign up
             try {
                 // cek user exist
-                const res = await fetch('api/userexist', {
-                    method : 'POST',
-                    headers : {
-                        'Content-Type' : 'aplication/json'
-                    },
-                    body : JSON.stringify(data)
-                })
+                const res =  await fetch('api/userexist', {
+                        method : 'POST',
+                        headers : {
+                            'Content-Type' : 'aplication/json'
+                        },
+                        body : JSON.stringify(data)
+                    })
                 const user = await res.json()
                 // jika user exist
                 if (user.exist) {
-                    setInfo('User already exist, please use another email')
+                    setPending(false)
+                    setInfo('User already exist')
                     return
                 } else {
                     const res = await fetch('api/signup', {
@@ -84,6 +90,7 @@ export function Form({head, content}) {
                         },
                         body : JSON.stringify(data)
                     })
+                    setPending(false)
                     if (res.ok) {
                         router.push('/')
                     } else {
@@ -98,36 +105,39 @@ export function Form({head, content}) {
     return (
         <div>
             <form onSubmit={handleSubmit}>
-            <Image
-                src="/logo-tasklify.svg"
-                width={70}
-                height={70}
-                alt="logo tasklify"
-                priority={false}
-                className="m-auto"
-            />
-                <h2 className='text-3xl my-10'>{`${head} to Tasklify`}</h2>
+                <Image
+                    src="/logo-tasklify.svg"
+                    width={0}
+                    height={0}
+                    alt="logo tasklify"
+                    priority={false}
+                    className="m-auto w-[70px] h-auto"
+                />
+                <h2 className='text-3xl my-10 text-center'>{`${head} to Tasklify`}</h2>
                 {content.map(el => (
                     <div className='relative my-4' key={el.id}>
                         {/* <label htmlFor={el.id}>{el.name}</label><br/> */}
-                        <input className='border-2 border-solid border-black rounded-full px-4 py-1 w-full placeholder-black outline-none' name={el.id} onChange={handleChange} placeholder={el.id} id={el.id} type={el.type}/>
+                        <input disabled={isPending} className='disabled:bg-white border-2 border-solid border-black rounded-full px-4 py-1 w-full placeholder-black outline-none' name={el.id} onChange={handleChange} placeholder={el.id} id={el.id} type={el.type}/>
                         <div className='bg-black top-0 right-0 left-0 bottom-0 -z-10 absolute rounded-full -translate-x-1 translate-y-1'></div>
                     </div>
                 ))}
-                <p>{info}</p>
+                <p className='text-sm mb-4'>{info}</p>
+                <p href='' className='text-end text-sm mb-4 text-blue-700'><a href=''>forgot password?</a></p>
                 <Button
                     name={head === 'Sign in' ? 'Sign in' : 'Sign up'}
                     bgColor="bg-[#56F35D]"
                     type="submit"
+                    isPending={isPending}
                 />
                 <div className='w-full mt-4 mb-2 h-10 flex items-center justify-center'>
                     <div className='w-full h-[0.2rem] bg-black'></div>
-                    <p className='bg-white px-2 w-fit absolute text-sm'>or continue with</p>
+                    <p className='bg-[#F5F5F5] px-2 w-fit absolute text-sm'>or continue with</p>
                 </div>
                 <Button
                     name="Google"
                     bgColor="bg-[#54CCFF]"
                     type="button"
+                    isPending={isPending}
                 />
                 <p className='text-sm mt-6 text-center'>{ head === 'Sign in' ? "don't have an account? ": "already have an account? " }
                     <Link className='text-blue-700' href={head === 'Sign in' ? '/signup' : '/'}>{ head === 'Sign in' ? "Sign up ": "Sign in" }</Link>
